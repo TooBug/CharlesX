@@ -19,6 +19,10 @@
   ],
   "author": "TooBug",
   "license": "MIT",
+  "repository" : {
+    "type" : "git",
+    "url" : "git@github.com:TooBug/CharlesX.git"
+  },
   "dependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-preset-es2015": "^6.14.0",
