@@ -9,11 +9,23 @@ optimist.usage('Usage: $0 [-p [num]]')
 	.default('p', 8888)
 	.alias('h', 'help')
 	.describe('h', 'Show this help info.')
+	.alias('s', 'hosts')
 	.alias('v', 'version')
 	.describe('v', 'Show Version.');
 
+
 let argv = optimist.argv;
 const PORT = argv.p || 8888;
+
+let hostsArr = argv.s;
+if(!hostsArr) hostsArr = [];
+if(!Array.isArray(hostsArr)) hostsArr = [hostsArr];
+
+let hosts = {};
+hostsArr.forEach((hostsStr) => {
+	let hostsPart = hostsStr.split('=');
+	hosts[hostsPart[0].trim()] = hostsPart[1].trim();
+});
 
 if(argv.v){
 	console.log('CharlesX ' + require('../package.json').version);
@@ -30,4 +42,4 @@ if(!PORT){
 	return;
 }
 
-proxy.init(PORT);
+proxy.init(PORT, hosts);

@@ -6,32 +6,60 @@ import httpProxy from 'http-proxy'
 
 export default {
 
-	init(port){
+	init(port, hosts = {}){
 
 		let proxy = httpProxy.createProxyServer({})
 		let server = http.createServer()
+
+		let currentRes;
 		
 		proxy.on('error', function(e) {
+			if(currentRes){
+				currentRes.statusCode = 500;
+				currentRes.end(`CharlesX Error:${e.message}`);
+			}
 			console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] :( Error:${e.message}`)
+		})
+
+		proxy.on('proxyReq', function (proxyReq, req, res) {
+			proxyReq.setHeader('host', req.headers.host)
 		})
 
 		proxy.on('proxyRes', function (proxyRes, req, res) {
 			console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] <-- ${res.statusCode} ${req.url}`)
 		})
 
+		// HTTP
 		server.on('request', (req, res) => {
+
 			console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] --> ${req.method} ${req.url}`)
-			proxy.web(req, res, { target: 'http://'+req.headers.host })
+			currentRes = res;
+
+			let urlPart = url.parse('http://' + req.headers.host)
+			let targetHost = urlPart.hostname
+			if(hosts[urlPart.hostname]){
+				targetHost = hosts[urlPart.hostname]
+				console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] --> rewrite ${urlPart.hostname} to ${targetHost}`)
+			}
+			// proxy.web(req, res, { target: 'http://'+req.headers.host })
+			proxy.web(req, res, { target: `http://${targetHost}:${urlPart.port}` })
 		}).on('error', (e) => {
 			console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] <-- Error:${e.message}`)
 			res.end(`CharlesX Error:${e.message}`)
 		})
 
+		// HTTPS
 		server.on('connect', (req, res) => {
 
-			let u = url.parse('http://' + req.url)
 			console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] --> ${req.method} ${req.url}`)
-			let pSock = net.connect(u.port, u.hostname, () => {
+			let urlPart = url.parse('http://' + req.url)
+			let targetHost = urlPart.hostname
+			if(hosts[urlPart.hostname]){
+				targetHost = hosts[urlPart.hostname]
+				console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] --> rewrite ${urlPart.hostname} to ${targetHost}`)
+			}
+
+			let pSock = net.connect(urlPart.port, targetHost, () => {
 				res.write('HTTP/1.1 200 Connection Established\r\n\r\n')
 				pSock.pipe(res)
 			}).on('error', (e) => {
