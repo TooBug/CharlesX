@@ -3,10 +3,21 @@ import net from 'net'
 import url from 'url'
 import moment from 'moment'
 import httpProxy from 'http-proxy'
+import Throttle from 'throttle'
 
 export default {
 
-	init(port, hosts = {}){
+	init(port, hosts = {}, throttle = []){
+
+		if(!throttle[0]){
+			throttle[0] = Infinity
+			throttle[1] = Infinity
+		}else{
+			console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] Speed limit: ${throttle.join(',')}`);
+		}
+
+		let resThrottle = new Throttle(+throttle[0] * 1024)
+		let reqThrottle = new Throttle(+throttle[1] * 1024)
 
 		let proxy = httpProxy.createProxyServer({})
 		let server = http.createServer()
@@ -61,12 +72,12 @@ export default {
 
 			let pSock = net.connect(urlPart.port, targetHost, () => {
 				res.write('HTTP/1.1 200 Connection Established\r\n\r\n')
-				pSock.pipe(res)
+				pSock.pipe(resThrottle).pipe(res)
 			}).on('error', (e) => {
 				console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] <-- Error:${e.message}`)
 				res.end(`CharlesX Error:${e.message}`)
 			})
-			res.pipe(pSock)
+			res.pipe(reqThrottle).pipe(pSock)
 		})
 
 		server.listen(port)
