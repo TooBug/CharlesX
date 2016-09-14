@@ -7,6 +7,6 @@ require('babel-register')({
 	]
 });
 
-let proxy = require('./libs/proxy');
+var proxy = require('./libs/proxy');
 
 module.exports = proxy;
