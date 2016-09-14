@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-let optimist = require('optimist');
-let proxy = require('../index');
+var optimist = require('optimist');
+var proxy = require('../index');
 
 optimist.usage('Usage: $0 [-p [num]]')
 	.alias('p', 'port')
@@ -14,16 +14,16 @@ optimist.usage('Usage: $0 [-p [num]]')
 	.describe('v', 'Show Version.');
 
 
-let argv = optimist.argv;
-const PORT = argv.p || 8888;
+var argv = optimist.argv;
+var PORT = argv.p || 8888;
 
-let hostsArr = argv.s;
+var hostsArr = argv.s;
 if(!hostsArr) hostsArr = [];
 if(!Array.isArray(hostsArr)) hostsArr = [hostsArr];
 
-let hosts = {};
+var hosts = {};
 hostsArr.forEach((hostsStr) => {
-	let hostsPart = hostsStr.split('=');
+	var hostsPart = hostsStr.split('=');
 	hosts[hostsPart[0].trim()] = hostsPart[1].trim();
 });
 

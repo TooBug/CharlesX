@@ -37,6 +37,10 @@ charlesx -s www.toobug.net=127.0.0.1 -s toobug.net=127.0.0.1
 
 ## History
 
+### 1.1.1 2016-09-14
+
+- 兼容Node低版本
+
 ### 1.1.0 2016-08-27
 
 - 支持自定义hosts

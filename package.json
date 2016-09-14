@@ -1,6 +1,6 @@
 {
   "name": "charlesx",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "proxy tool similar to charles/fiddler.",
   "main": "index.js",
   "bin": {
