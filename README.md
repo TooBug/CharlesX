@@ -37,6 +37,10 @@ charlesx -s www.toobug.net=127.0.0.1 -s toobug.net=127.0.0.1
 
 ## History
 
+### 1.1.3 2017-03-20
+
+- 修复某些情况下代理后的pathname不正确的问题
+
 ### 1.1.2/1.1.1 2016-09-14
 
 - 兼容Node低版本

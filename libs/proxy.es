@@ -12,7 +12,7 @@ export default {
 		let server = http.createServer()
 
 		let currentRes;
-		
+
 		proxy.on('error', function(e) {
 			if(currentRes){
 				currentRes.statusCode = 500;
@@ -41,8 +41,9 @@ export default {
 				targetHost = hosts[urlPart.hostname]
 				console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] --> rewrite ${urlPart.hostname} to ${targetHost}`)
 			}
+			let port = urlPart.port || 80;
 			// proxy.web(req, res, { target: 'http://'+req.headers.host })
-			proxy.web(req, res, { target: `http://${targetHost}:${urlPart.port}` })
+			proxy.web(req, res, { target: `http://${targetHost}:${port}` })
 		}).on('error', (e) => {
 			console.log(`[${moment().format('YYYY-MM-DD HH:mm:ss')}] <-- Error:${e.message}`)
 			res.end(`CharlesX Error:${e.message}`)
